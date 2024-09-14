@@ -14,19 +14,52 @@ function calculateDiscountedPrice() {
     // convertir la réponse en nombre virgule flottante
     const oldPrice = parseFloat(priceInput);
 
-    // définir le % de réduction
-    const reduce = 20;
+    // vérifier si l'utilisateur a entré un prix valide
+    if(isNaN(oldPrice) || oldPrice <= 0) {
+      console.log("Erreur: veuillez entrer un prix valide");
+      askForRetry();  
+      return;
+    }
 
-    // calculer la réduction
-    const discount = (oldPrice * reduce) / 100;
+    // demander a l'utilisateur de choisir le pourcentage de réduction
+    r1.question("choisissez un pourcentage de réduction (20, 50, 70) : ", (reduceInput) => {
+      const reduce = parseFloat(reduceInput);
 
-    // afficher le prix après réduction
-    // la method toFixed permet de convertir le résultat avec deux décimales
-    console.log("le prix après réduction est : " + (oldPrice - discount).toFixed(2));
+      // vérifier si le pourcentage choisi est valide
+      if(![20, 50, 70].includes(reduce)) {
+        console.log("Erreur: veuillez entrer un pourcentage valide");
+        askForRetry();
+        return;
+      }
 
-    // fermer l'interface readline après l'affichage du résultat
+      // calculer la réduction
+      const discount = (oldPrice * reduce) / 100;
+
+      // afficher le prix après réduction
+      // la method toFixed permet de convertir le résultat avec deux décimales
+      console.log("le prix après réduction est : " + (oldPrice - discount).toFixed(2));
+
+      // fermer l'interface readline après l'affichage du résultat
     r1.close();
+    });
   });
+}
+
+// fonction pour demander a l'utilisateur s'il veut réessayer ou quitter
+function askForRetry() {
+  r1.question("voulez-vous réessayer ? (oui/non) : ", (response) => {
+    if(response.trim().toLowerCase() === "oui") {
+      calculateDiscountedPrice()
+    }
+    else if(response.trim().toLowerCase() === "non") {
+      console.log("merci d\'avoir utiliser ce programme !")
+      r1.close()
+    }
+    else {
+      console.log("réponse non reconnue. veuillez répondre par 'oui' ou 'non'.")
+      askForRetry();
+    }
+  })
 }
 
 // appeler la fonction pour exécuter le projet
